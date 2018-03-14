@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+	<property name="defaultPattern"
+		value="[%d{dd/MMM/yyyy:HH:mm:ss' 'Z} %thread %-5level %C:%L %X{X-Correlation-Id}] %msg%n" />
+
+	<appender name="micro"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/var/log/proptiger/micro/micro.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/var/log/proptiger/micro/micro-%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.proptiger.core.handler.ResponseErrorWriter">
+		<level value="DEBUG" />
+	</logger>
+		<logger name="springfox">
+		<level value="ERROR" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="micro" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
