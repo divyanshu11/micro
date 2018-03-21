@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 //import com.proptiger.app.model.transaction.ProductPaymentStatusAttributes;
 import com.proptiger.app.repo.order.ProductPaymentStatusAttributesDao;
 import com.proptiger.app.repo.order.ProductPaymentStatusDao;
+import com.proptiger.core.config.AppCachingConfig;
 //import com.proptiger.app.service.cms.listing.PremiumListingService;
 import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.dto.order.LeadPaymentStatusDto;
 import com.proptiger.core.dto.order.LeadsCityDTO;
 import com.proptiger.core.dto.order.ProductPrePaymentDto;
 import com.proptiger.core.enums.Domain;
@@ -42,12 +48,14 @@ import com.proptiger.core.model.cyclops.MasterSellerLeadPrice;
 import com.proptiger.core.model.enums.transaction.MasterLeadPaymentStatusEnum;
 import com.proptiger.core.model.enums.transaction.MasterLeadPaymentTypeEnum;
 import com.proptiger.core.model.enums.transaction.MasterProductPaymentStatusEnum;
+import com.proptiger.core.model.transaction.LeadPaymentStatus;
 import com.proptiger.core.model.transaction.ProductPaymentStatus;
 import com.proptiger.core.model.transaction.ProductPaymentStatusAttributes;
 import com.proptiger.core.pojo.FIQLSelector;
 import com.proptiger.core.pojo.Selector;
 import com.proptiger.core.pojo.response.PaginatedResponse;
 import com.proptiger.core.service.SNSService;
+import com.proptiger.core.util.Constants;
 import com.proptiger.core.util.NullAwareBeanUtilsBean;
 import com.proptiger.core.util.SecurityContextUtils;
 //import com.proptiger.data.dto.order.LeadsCityDTO;
@@ -66,7 +74,7 @@ public class ProductPaymentStatusService {
 
 	//@Divyanshu
 	@Autowired
-	private MIDLServiceHelper midlServiceHelper;
+	private MIDLServiceHelper 				midlServiceHelper;
 	@Autowired
     private CyclopsServiceHelper              cyclopsServiceHelper;
 
@@ -487,5 +495,103 @@ public class ProductPaymentStatusService {
             Integer amount) {
         return productPaymentStatusDao
                 .updateAmountForSellerSaleType(sellerId, saleTypeId, productTypeId, createdDateLessThan, amount);
+    }
+    
+    /*
+     * @Divyanshu
+     */
+    public List<ProductPaymentStatus> getProductPaymentHistoryBySeller(Integer sellerId) {
+        Integer start = 0;
+        long totalCount = -1;
+        List<ProductPaymentStatus> responseList = new ArrayList<>();
+        List<ProductPaymentStatus> productPaymentList = new ArrayList<>();
+        FIQLSelector fiqlSelector = new FIQLSelector();
+        fiqlSelector.addAndConditionToFilter("statusId", MasterLeadPaymentStatusEnum.PaymentConfirmed.getId());
+        fiqlSelector.addAndConditionToFilter("crmUserId", sellerId);
+        fiqlSelector.setRows(ROWS);
+        do {
+            PaginatedResponse<List<ProductPaymentStatus>> response = getProductPaymentStatusBySelector(fiqlSelector);
+            totalCount = response.getTotalCount();
+            responseList = response.getResults();
+            start += ROWS;
+            productPaymentList.addAll(responseList);
+            fiqlSelector.setStart(start + 1);
+        }
+        while (start + 1 < totalCount);
+        return productPaymentList;
+    }
+    
+    //LeadPaymentstatusDto is kept same
+    /**
+     * 
+     * @param crmUserId
+     * @return
+     */
+    @Cacheable(
+            value = Constants.CacheName.SELLER_PAYMENT_CATEGORY,
+            cacheManager = AppCachingConfig.SHORT_DURATION_CACHE)
+    public List<LeadPaymentStatusDto> getLeadCountDistribution(Integer crmUserId) {
+        List<Object[]> response = productPaymentStatusDao.getLeadDistribution(crmUserId);
+        return getLeadPaymentStatusDto(response);
+    }
+    private List<LeadPaymentStatusDto> getLeadPaymentStatusDto(List<Object[]> objectArray) {
+        List<LeadPaymentStatusDto> leadPaymentStatusDtos = new ArrayList<>();
+        for (Object[] o : objectArray) {
+            LeadPaymentStatusDto l = new LeadPaymentStatusDto();
+            l.setId(Integer.parseInt(String.valueOf(o[0])));
+            l.setStatusName(
+                    MasterLeadPaymentStatusEnum
+                            .getMasterLeadPaymentStatusEnumById(Integer.parseInt(String.valueOf(o[0]))).name());
+            l.setLeadSaleType(
+                    MasterLeadPaymentTypeEnum.getMasterLeadPaymentTypeEnumById(Integer.parseInt(String.valueOf(o[1])))
+                            .name());
+            l.setLeadCount(Long.parseLong(String.valueOf(o[2])));
+            leadPaymentStatusDtos.add(l);
+        }
+        return leadPaymentStatusDtos;
+    }
+    public HashMap<Integer, Integer> getLeadCounts(List<Integer> crmUserIds) {
+        List<Object[]> response = productPaymentStatusDao.getLeadCounts(crmUserIds);
+        return getLeadPaymentCounts(response);
+    }
+    public HashMap<Integer, Integer> getPrepaidAndPostPaidLeadCounts(Set<Integer> sellerIds) {
+        List<Object[]> response = productPaymentStatusDao.getPrepaidAndPostPaidLeadCounts(sellerIds);
+        return getLeadPaymentCounts(response);
+    }
+    private HashMap<Integer, Integer> getLeadPaymentCounts(List<Object[]> objectArray) {
+        HashMap<Integer, Integer> leadPaymentsCount = new HashMap<>();
+        for (Object[] o : objectArray) {
+            int UserId = Integer.parseInt(String.valueOf(o[0]));
+            int leadCount = Integer.parseInt(String.valueOf(o[1]));
+            leadPaymentsCount.put(UserId, leadCount);
+        }
+        return leadPaymentsCount;
+    }
+    /**
+     * Find list of all paid sellers with last payment date for lead type
+     * 
+     * @param saleTypeId
+     * @return
+     */
+    public Map<Integer, Date> findPaidSellersWithLastPaymentDateForLeadType(int saleTypeId) {
+        List<LeadPaymentStatusDto> lpsDTOList =
+                productPaymentStatusDao.findPaidSellersWithLastPaymentDateForLeadType(saleTypeId);
+        return lpsDTOList.stream()
+                .collect(Collectors.toMap(LeadPaymentStatusDto::getSellerId, LeadPaymentStatusDto::getPaymentDate));
+    }
+    /**
+     * 
+     * @param leadId
+     * @return
+     */
+    public ProductPaymentStatus getProductPaymentStatusByProductId(int productId) {
+       List<ProductPaymentStatus>productPaymentStatus = productPaymentStatusDao.findByProductId(productId);
+       if (productPaymentStatus.isEmpty()) {
+           return null;
+       }
+       if (productPaymentStatus.size() > 1) {
+           logger.error("Multiple rows returned for leadId: {}", productId);
+       }
+       return productPaymentStatus.get(0);
     }
 }

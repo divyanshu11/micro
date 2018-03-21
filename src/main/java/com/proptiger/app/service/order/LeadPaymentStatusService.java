@@ -27,14 +27,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableSet;
-import com.proptiger.app.dto.order.LeadPaymentDocument;
+import com.proptiger.core.dto.order.LeadPaymentDocument;
 //import com.proptiger.app.dto.order.LeadPaymentDocument;
 import com.proptiger.app.dto.order.LeadPaymentDto;
-import com.proptiger.app.dto.order.LeadPaymentStatusDto;
+//import com.proptiger.app.dto.order.LeadPaymentStatusDto;
 import com.proptiger.app.dto.order.LeadPrePaymentDTO;
 import com.proptiger.app.repo.order.LeadPaymentStatusAttributeDao;
 import com.proptiger.app.repo.order.LeadPaymentStatusDao;
-import com.proptiger.app.repo.transaction.PaymentAttributeDao;
+//import com.proptiger.app.repo.transaction.PaymentAttributeDao;
 import com.proptiger.core.config.AppCachingConfig;
 import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
@@ -42,6 +42,7 @@ import com.proptiger.core.dto.external.ICRMLead;
 import com.proptiger.core.dto.external.LeadPaymentStatusPatchDTO;
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.dto.internal.LeadFinanceDto;
+import com.proptiger.core.dto.order.LeadPaymentStatusDto;
 import com.proptiger.core.dto.order.LeadsCityDTO;
 import com.proptiger.core.dto.order.ProductPrePaymentDto;
 import com.proptiger.core.enums.MasterEntityTypes;
@@ -110,8 +111,8 @@ public class LeadPaymentStatusService {
     // DO NOT AUTOWIRE
   //  private TransactionService            transactionService;
 
-    @Autowired
-    private PaymentAttributeDao           paymentAttributeDao;
+//    @Autowired
+//    private PaymentAttributeDao           paymentAttributeDao;
     
     //@Divyanshu
     @Autowired
@@ -715,7 +716,8 @@ public class LeadPaymentStatusService {
             return;
         }
         List<LeadPaymentDocument> leadPaymentsDocuments =
-                paymentAttributeDao.getPaymentNumberFromLeadIds(leadIds, TransactionType.SellerPayment.getId());
+       //   Divyanshu      paymentAttributeDao.getPaymentNumberFromLeadIds(leadIds, TransactionType.SellerPayment.getId());
+        		midlServiceHelper.getPaymentNumberFromLeadIds(leadIds,TransactionType.SellerPayment.getId() );
 
         if (CollectionUtils.isEmpty(leadPaymentsDocuments)) {
             return;
@@ -750,8 +752,9 @@ public class LeadPaymentStatusService {
         if (CollectionUtils.isEmpty(leadPaymentStatusIds)) {
             return;
         }
-        List<LeadPaymentDocument> leadPaymentsDocuments = paymentAttributeDao.getPaymentNumberFromLeadPaymentStatusIds(
-                leadPaymentStatusIds,
+  //Divyanshu      List<LeadPaymentDocument> leadPaymentsDocuments = paymentAttributeDao.getPaymentNumberFromLeadPaymentStatusIds(
+        List<LeadPaymentDocument> leadPaymentsDocuments = midlServiceHelper.getPaymentNumberFromLeadPaymentStatusIds(     
+        leadPaymentStatusIds,
                 TransactionType.SellerPrePayment.getId());
 
         if (CollectionUtils.isEmpty(leadPaymentsDocuments)) {
@@ -807,12 +810,12 @@ public class LeadPaymentStatusService {
         List<Object[]> response = leadPaymentStatusDao.getLeadDistribution(crmUserId);
         return getLeadPaymentStatusDto(response);
     }
-
+//@Divyanshu copying to productPaymentStatus 
     public HashMap<Integer, Integer> getLeadCounts(List<Integer> crmUserIds) {
         List<Object[]> response = leadPaymentStatusDao.getLeadCounts(crmUserIds);
         return getLeadPaymentCounts(response);
     }
-
+  //@Divyanshu copying to productPaymentStatus
     public HashMap<Integer, Integer> getPrepaidAndPostPaidLeadCounts(Set<Integer> sellerIds) {
         List<Object[]> response = leadPaymentStatusDao.getPrepaidAndPostPaidLeadCounts(sellerIds);
         return getLeadPaymentCounts(response);
@@ -843,7 +846,7 @@ public class LeadPaymentStatusService {
         return leadPaymentStatusDtos;
     }
 
-
+//Copied to pPSService
     private HashMap<Integer, Integer> getLeadPaymentCounts(List<Object[]> objectArray) {
         HashMap<Integer, Integer> leadPaymentsCount = new HashMap<>();
         for (Object[] o : objectArray) {

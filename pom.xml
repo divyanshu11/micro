@@ -273,7 +273,11 @@
         <artifactId>jaxb-api</artifactId>
         <version>2.3.0</version>
     </dependency>
-
+	<dependency>
+	<groupId>uk.com.robust-it</groupId>
+	<artifactId>cloning</artifactId>
+	<version>1.9.0</version>
+	</dependency>
 		<dependency>
 			<groupId>com.github.fge</groupId>
 			<artifactId>json-patch</artifactId>

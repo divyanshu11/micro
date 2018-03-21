@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.proptiger.app.dto.order.LeadPaymentStatusDto;
+import com.proptiger.core.dto.order.LeadPaymentStatusDto;
+//import com.proptiger.app.dto.order.LeadPaymentStatusDto;
 import com.proptiger.core.model.transaction.LeadPaymentStatus;
 //import com.proptiger.data.repo.order.LeadPaymentStatusDto;
 /**

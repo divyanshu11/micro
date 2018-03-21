@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
-import com.proptiger.app.dto.order.LeadPaymentStatusDto;
+import com.proptiger.core.dto.order.LeadPaymentStatusDto;
+//import com.proptiger.app.dto.order.LeadPaymentStatusDto;
 import com.proptiger.core.model.transaction.LeadPaymentStatus;
 import com.proptiger.core.pojo.FIQLSelector;
 import com.proptiger.core.pojo.response.PaginatedResponse;

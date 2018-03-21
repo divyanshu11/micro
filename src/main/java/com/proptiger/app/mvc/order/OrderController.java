@@ -1,5 +1,6 @@
 package com.proptiger.app.mvc.order;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -320,5 +321,33 @@ public class OrderController extends BaseController{
                 PATCH_LEAD_PAYMENT_STATUS_RESPONSE_STRING,
                 leadPaymentStatusService.updateLeadAmount(leadPaymentStatusPatchDTO));
         return new APIResponse(patchResponse);
+    }
+    @ResponseBody
+    @RequestMapping(value="data/v1/order/lead-payment-status-by-id",method=RequestMethod.GET)
+    public APIResponse findByLeadId(@RequestParam Integer leadId)
+    {
+    	return new APIResponse(leadPaymentStatusService.findByLeadId(leadId));
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="data/v1/order/save/lead-payment-status",method=RequestMethod.GET)
+    public APIResponse saveLeadPaymentStatusAsProductPaymentStatus(List<LeadPaymentStatus> leadPaymentStatus)
+    {
+    		return new APIResponse(leadPaymentStatusService.saveLeadPaymentStatusAsProductPaymentStatus(leadPaymentStatus));
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="data/v1/order/count-deals-disclosed",method=RequestMethod.GET)
+    public APIResponse getCountOfLeadsDisclosed(@RequestParam int userId,
+    		@RequestParam Date date,
+    		@RequestParam int leadTypeId)
+    {
+    	return new APIResponse(leadPaymentStatusService.getCountOfLeadsDisclosed(userId, date, leadTypeId));
+    }
+    @ResponseBody
+    @RequestMapping(value="data/v1/order/lead-payment-status-by-selector",method=RequestMethod.GET)
+    public APIResponse getLeadPaymentStatusBySelector(@RequestParam FIQLSelector selector)
+    {
+    	return new APIResponse(leadPaymentStatusService.getLeadPaymentStatusBySelector(selector));
     }
 }

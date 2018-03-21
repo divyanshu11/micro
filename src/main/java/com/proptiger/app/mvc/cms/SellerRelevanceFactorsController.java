@@ -1,5 +1,6 @@
 package com.proptiger.app.mvc.cms;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -142,6 +143,45 @@ public class SellerRelevanceFactorsController extends BaseController{
             @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser userInfo) {
         sellerRelevanceFactors.forEach(srf -> srf.setUpdatedBy(userInfo.getUserIdentifier()));
         return new APIResponse(sellerRelevanceFactorsService.patchSellerRelevanceFactors(sellerRelevanceFactors));
+    }
+    /*
+     * @Divyanshu
+     */
+    @ResponseBody
+    @RequestMapping(value="data/v1/entity/seller/srf/get-high-badge",method=RequestMethod.GET)
+    public APIResponse getHighestBadge(@RequestParam Set<Integer> sellerIds)
+    {
+    		return new APIResponse(sellerRelevanceFactorsService.getHighestBadge(sellerIds));
+    }
+    @ResponseBody
+    @RequestMapping(value="data/v1/entity/find-by-tx-category",method=RequestMethod.GET)
+    public APIResponse findByTransactionCategory(@RequestParam List<String> transactionCategory)
+    {
+    		return new APIResponse(sellerRelevanceFactorsService.findByTransactionCategory(transactionCategory));
+    }
+    //Used in MicroServiceHelper
+    @ResponseBody
+    @RequestMapping(value="data/v1/entity/multiply-lead")
+    public void multiplyLeadForOwner(@RequestParam Set<Integer> listingsIds)
+    {
+    		sellerRelevanceFactorsService.multiplyLeadForOwner(listingsIds);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="data/v1/entity/seller/by-sale-type",method=RequestMethod.GET)
+    public APIResponse getSellersBySaleTypeTransactionId(
+            @RequestParam Collection<Integer> transactionCategoryId,
+            @RequestParam Integer saleTypeId)
+    {
+    	return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionId(transactionCategoryId, saleTypeId));
+    }
+    // Used in NotificationService via microServicehelper
+    @ResponseBody
+    @RequestMapping(value="data/v1/entity/seller/by-tx-category-id",method=RequestMethod.GET)
+    public APIResponse getSellersBySaleTypeTransactionCategoryIds(@RequestParam List<Integer> transactionCategory,
+    		@RequestParam Integer saleTypeId)
+    {
+    		return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionCategoryIds(transactionCategory,saleTypeId));
     }
 
 }

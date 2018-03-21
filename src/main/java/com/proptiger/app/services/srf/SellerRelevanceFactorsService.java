@@ -793,4 +793,11 @@ import com.proptiger.core.util.ExclusionAwareBeanUtilsBean;
 	        });
 	        return sellerBadgeMap;
 	    }
+	    /*
+	     * @Divyanshu
+	     */
+	    public List<SellerRelevanceFactors> findByTransactionCategory(List<String> transactionCategory)
+	    {
+	    	return sellerRelevanceFactorsDao.findByTransactionCategory(transactionCategory);
+	    }
 }
