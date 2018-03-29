@@ -78,14 +78,14 @@ extends JpaRepository<ProductPaymentStatus, Integer>, ProductPaymentStatusDaoCus
 	            value = "select crmUserId, count(*) from ProductPaymentStatus where statusId = 3 and saleTypeId in (1,2) and crmUserId in (?1) group by crmUserId")
 	    public List<Object[]> getPrepaidAndPostPaidLeadCounts(Set<Integer> sellerIds);
 	    
-	    /**
-	     * @param leadTypeId
-	     * @return
-	     */
-	    @Cacheable(value = Constants.CacheName.SELLER_PAYMENT_COUNT)
-	    @Query(
-	            value = "select new com.proptiger.core.dto.order.LeadPaymentStatusDto(lps.crmUserId,max(p.updatedAt)) from ProductPaymentStatus pps join pps.payment p where pps.statusId=3 and pps.saleTypeId = ?1 group by pps.crmUserId")
-	    public List<LeadPaymentStatusDto> findPaidSellersWithLastPaymentDateForLeadType(int leadTypeId);
+//	    /**
+//	     * @param leadTypeId
+//	     * @return
+//	     */
+//	    @Cacheable(value = Constants.CacheName.SELLER_PAYMENT_COUNT)
+//	    @Query(
+//	            value = "select new com.proptiger.core.dto.order.LeadPaymentStatusDto(lps.crmUserId,max(p.updatedAt)) from ProductPaymentStatus pps join pps.payment p where pps.statusId=3 and pps.saleTypeId = ?1 group by pps.crmUserId")
+//	    public List<LeadPaymentStatusDto> findPaidSellersWithLastPaymentDateForLeadType(int leadTypeId);
 	    /**
 	     * 
 	     * @param leadId(ProductId)

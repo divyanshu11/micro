@@ -322,20 +322,22 @@ public class OrderController extends BaseController{
                 leadPaymentStatusService.updateLeadAmount(leadPaymentStatusPatchDTO));
         return new APIResponse(patchResponse);
     }
+    //Ok tested
     @ResponseBody
     @RequestMapping(value="data/v1/order/lead-payment-status-by-id",method=RequestMethod.GET)
     public APIResponse findByLeadId(@RequestParam Integer leadId)
     {
     	return new APIResponse(leadPaymentStatusService.findByLeadId(leadId));
     }
-    
+    //PENDING
+    //SOME POST ISSUE IN MicroServiceHelper
     @ResponseBody
-    @RequestMapping(value="data/v1/order/save/lead-payment-status",method=RequestMethod.GET)
-    public APIResponse saveLeadPaymentStatusAsProductPaymentStatus(List<LeadPaymentStatus> leadPaymentStatus)
+    @RequestMapping(value="data/v1/order/save/lead-payment-status",method=RequestMethod.POST)
+    public APIResponse saveLeadPaymentStatusAsProductPaymentStatus(@RequestBody List<LeadPaymentStatus> leadPaymentStatus)
     {
     		return new APIResponse(leadPaymentStatusService.saveLeadPaymentStatusAsProductPaymentStatus(leadPaymentStatus));
     }
-    
+    //OK TESTED
     @ResponseBody
     @RequestMapping(value="data/v1/order/count-deals-disclosed",method=RequestMethod.GET)
     public APIResponse getCountOfLeadsDisclosed(@RequestParam int userId,
@@ -349,5 +351,12 @@ public class OrderController extends BaseController{
     public APIResponse getLeadPaymentStatusBySelector(@RequestParam FIQLSelector selector)
     {
     	return new APIResponse(leadPaymentStatusService.getLeadPaymentStatusBySelector(selector));
+    }
+    //OK TESTED
+    @ResponseBody
+    @RequestMapping(value="data/v1/order/seller-with-date-and-type",method=RequestMethod.GET)
+    public APIResponse findPaidSellersWithLastPaymentDateForLeadType(@RequestParam Integer saleTypeId)
+    {
+ 	   return new APIResponse(leadPaymentStatusService.findPaidSellersWithLastPaymentDateForLeadType(saleTypeId));
     }
 }

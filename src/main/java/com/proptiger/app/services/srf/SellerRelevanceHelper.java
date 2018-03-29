@@ -37,6 +37,7 @@ import com.proptiger.app.repo.cms.MasterSellerScoreTypesDao;
 import com.proptiger.app.repo.srf.SellerRelevanceFactorsDao;
 import com.proptiger.app.repo.srf.SellerRelevancePackageDao;
 import com.proptiger.app.service.order.ProductPaymentStatusService;
+import com.proptiger.core.dto.cms.score.CompanyRelevantScoresDTO;
 import com.proptiger.core.enums.MobileApplication;
 import com.proptiger.core.enums.external.mbridge.SellerSuspensionStatus;
 import com.proptiger.core.enums.notification.MediumType;
@@ -754,7 +755,7 @@ public class SellerRelevanceHelper {
     public Float computeTransactionRevealScoreForListing(
             Listing listing,
             List<String> listingSellerTransactionStatuses,
-    //        CompanyRelevantScoresDTO companyRelevantScoresDTO,
+            CompanyRelevantScoresDTO companyRelevantScoresDTO,
             CategoryType categoryType) {
         Float transactionRevealScore = null;
         Set<String> transactionStatusesSet = new HashSet<>(listingSellerTransactionStatuses);

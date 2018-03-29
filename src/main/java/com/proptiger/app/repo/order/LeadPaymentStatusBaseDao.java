@@ -49,7 +49,7 @@ public interface LeadPaymentStatusBaseDao extends JpaRepository<LeadPaymentStatu
      * @return
      */
     @Query(
-            value = "select new com.proptiger.app.dto.order.LeadPaymentStatusDto(lps.crmUserId,max(p.updatedAt)) from LeadPaymentStatus lps join lps.payment p where lps.statusId=3 and lps.leadTypeId = ?1 group by lps.crmUserId")
+            value = "select new com.proptiger.core.dto.order.LeadPaymentStatusDto(lps.crmUserId,max(p.updatedAt)) from LeadPaymentStatus lps join lps.payment p where lps.statusId=3 and lps.leadTypeId = ?1 group by lps.crmUserId")
     public List<LeadPaymentStatusDto> findPaidSellersWithLastPaymentDateForLeadType(int leadTypeId);
 
     /**

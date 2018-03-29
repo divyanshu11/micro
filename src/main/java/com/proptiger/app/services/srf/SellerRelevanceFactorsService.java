@@ -34,6 +34,7 @@ import com.proptiger.app.repo.srf.SellerRelevanceFactorsDao;
 import com.proptiger.app.repo.srf.SellerRelevanceFactorsOldDao;
 import com.proptiger.app.repo.srf.SellerTransactionCategoryGroupMappingDao;
 import com.proptiger.app.service.order.ProductPaymentStatusService;
+import com.proptiger.core.dto.cms.score.CompanyRelevantScoresDTO;
 import com.proptiger.core.enums.Domain;
 import com.proptiger.core.exception.BadRequestException;
 import com.proptiger.core.helper.CyclopsServiceHelper;
@@ -43,9 +44,11 @@ import com.proptiger.core.model.cms.SellerRelevanceFactorScoreMapping;
 import com.proptiger.core.model.cms.SellerRelevanceFactors;
 import com.proptiger.core.model.cms.SellerRelevanceFactorsOld;
 import com.proptiger.core.model.cms.SellerRelevancePackage;
+import com.proptiger.core.model.cms.SellerVisibilityRankings;
 import com.proptiger.core.model.cms.TransactionCategoryGroupsMapping;
 import com.proptiger.core.model.cms.MasterTransactionCategoryGroup.TransactionCategoryGroups;
 import com.proptiger.core.model.cms.RawSellerDTO;
+import com.proptiger.core.model.cms.SellerTransactionCategories.CategoryType;
 import com.proptiger.core.model.cms.SellerTransactionCategories.SellerTransactionCategory;
 import com.proptiger.core.model.enums.transaction.MasterLeadPaymentTypeEnum;
 import com.proptiger.core.model.transaction.ProductPaymentStatus;
@@ -517,10 +520,14 @@ import com.proptiger.core.util.ExclusionAwareBeanUtilsBean;
 	        /*
 	         * Trigger listing indexing for updated sellers
 	         */
-//	        solrListingIndexingQueueService.process(
+//Divyanshu	        solrListingIndexingQueueService.process(
 //	                Listing.FIELD_NAME_SELLER_ID,
 //	                Collections.singletonList(sellerRelevanceFactorsDB.getSellerId()),
 //	                Domain.Makaan);
+	        midlServiceHelper.process(
+	                Listing.FIELD_NAME_SELLER_ID,
+	                Collections.singletonList(sellerRelevanceFactorsDB.getSellerId()),
+	                Domain.Makaan);
 
 	        sellerRelevanceHelper.calculateAndUpdatePackageDuration(srfnListForUpdatePackageEndDate);
 	        return sellerRelevanceFactorsDB;
@@ -799,5 +806,21 @@ import com.proptiger.core.util.ExclusionAwareBeanUtilsBean;
 	    public List<SellerRelevanceFactors> findByTransactionCategory(List<String> transactionCategory)
 	    {
 	    	return sellerRelevanceFactorsDao.findByTransactionCategory(transactionCategory);
+	    }
+	    
+	    public Float getTRSBasedOnVisbilityRank(
+	            Set<TransactionCategoryGroups> parentGroups,
+	            Set<SellerVisibilityRankings> sellerVisibilityRankings)
+	    {
+	    	return sellerRelevanceHelper.getTRSBasedOnVisbilityRank(parentGroups, sellerVisibilityRankings);
+	    }
+	    
+	    public Float computeTransactionRevealScoreForListing(
+	            Listing listing,
+	            List<String> listingSellerTransactionStatuses,
+	            CompanyRelevantScoresDTO companyRelevantScoresDTO,
+	            CategoryType categoryType) {
+	    	return sellerRelevanceHelper.computeTransactionRevealScoreForListing(listing, listingSellerTransactionStatuses,
+	    			companyRelevantScoresDTO, categoryType);
 	    }
 }

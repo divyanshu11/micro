@@ -567,18 +567,18 @@ public class ProductPaymentStatusService {
         }
         return leadPaymentsCount;
     }
-    /**
-     * Find list of all paid sellers with last payment date for lead type
-     * 
-     * @param saleTypeId
-     * @return
-     */
-    public Map<Integer, Date> findPaidSellersWithLastPaymentDateForLeadType(int saleTypeId) {
-        List<LeadPaymentStatusDto> lpsDTOList =
-                productPaymentStatusDao.findPaidSellersWithLastPaymentDateForLeadType(saleTypeId);
-        return lpsDTOList.stream()
-                .collect(Collectors.toMap(LeadPaymentStatusDto::getSellerId, LeadPaymentStatusDto::getPaymentDate));
-    }
+//    /**
+//     * Find list of all paid sellers with last payment date for lead type
+//     * 
+//     * @param saleTypeId
+//     * @return
+//     */
+//    public Map<Integer, Date> findPaidSellersWithLastPaymentDateForLeadType(int saleTypeId) {
+//        List<LeadPaymentStatusDto> lpsDTOList =
+//                productPaymentStatusDao.findPaidSellersWithLastPaymentDateForLeadType(saleTypeId);
+//        return lpsDTOList.stream()
+//                .collect(Collectors.toMap(LeadPaymentStatusDto::getSellerId, LeadPaymentStatusDto::getPaymentDate));
+//    }
     /**
      * 
      * @param leadId

@@ -189,7 +189,7 @@ public class SellerRelevanceCronService {
 	        Map<Integer, Map<Integer, List<ProductPaymentStatus>>> crmPaymentMapClone =
 	        		new Cloner().deepClone(origCrmPaymentMap);
 	      //          new Cloner().deepClone(origCrmPaymentMap);
-
+//TODO 
 	        allSellerRevelanceFactorMaps.entrySet().stream().forEach(entry -> {
 	            Integer sellerUserId = entry.getKey();
 	            Map<Integer, SellerRelevanceFactors> sellerSaleTypeToSRFMap = entry.getValue();
@@ -297,12 +297,17 @@ public class SellerRelevanceCronService {
 	         * Trigger listing indexing for updated sellers
 	         * @Divyanshu commented for the time
 	         */
-//	        if (triggerListingIndexing) {
-//	            solrListingIndexingQueueService.process(
+	        if (triggerListingIndexing) {
+//Divyanshu	            solrListingIndexingQueueService.process(
 //	                    Listing.FIELD_NAME_SELLER_ID,
 //	                    updatedSellerRelevanceFactors.stream().map(srf -> srf.getSellerId()).collect(Collectors.toList()),
 //	                    Domain.Makaan);
-//	        }
+	        	//OK
+	        		midlServiceHelper.process(
+		                    Listing.FIELD_NAME_SELLER_ID,
+		                    updatedSellerRelevanceFactors.stream().map(srf -> srf.getSellerId()).collect(Collectors.toList()),
+		                    Domain.Makaan);
+	        }
 	        return responseBuilder(updatedSellerRelevanceFactors, failedSellerIdSet);
 
 	    }
