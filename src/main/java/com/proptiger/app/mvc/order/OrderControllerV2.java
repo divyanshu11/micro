@@ -92,7 +92,8 @@ public class OrderControllerV2 {
    {
 	   return new APIResponse(productPaymentStatusService.getProductPaymentStatusByProductId(productId));
    }
-   //ERROR More than one row with the given identifier was found: 29859, for class: com.proptiger.core.model.transaction.ProductPaymentStatusAttributes
+   // Hit this query to get the data - select distinct(product_payment_status_id) from product_payment_status_attributes LIMIT 10;
+   //OK TESTED
    @ResponseBody
    @RequestMapping(value="prod-payment-status-by-ids-in",method=RequestMethod.GET)
    public APIResponse findByIdIn(@RequestParam Collection<Integer> ids)

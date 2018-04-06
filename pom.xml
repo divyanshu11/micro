@@ -298,7 +298,7 @@
 			<artifactId>logback-core</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
-
+		
 		<!-- Spring Social Facebook -->
 		<dependency>
 			<groupId>org.springframework.session</groupId>

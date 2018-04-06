@@ -107,7 +107,7 @@ public class SellerRelevanceEventService {
             Integer start,
             Integer rows) {
         Set<Integer> croCompanyUserIds = getAllCroIdsForCro(activeUser.getUserIdentifier());
-        //D------------------------------------------
+        //D ok tested------------------------------------------
      //   List<RawSeller> allocatedSellers = rawSellerDao.getSellersAllocatedToCro(croCompanyUserIds);
         List<RawSellerDTO> allocatedSellers = midlServiceHelper.getSellersAllocatedToCro(croCompanyUserIds);
         //--------------------------------------------

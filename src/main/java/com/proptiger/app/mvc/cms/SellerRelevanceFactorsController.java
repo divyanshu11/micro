@@ -2,8 +2,10 @@ package com.proptiger.app.mvc.cms;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.exception.Nestable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +27,7 @@ import com.proptiger.core.model.enums.transaction.MasterLeadPaymentTypeEnum;
 import com.proptiger.core.mvc.BaseController;
 import com.proptiger.core.pojo.FIQLSelector;
 import com.proptiger.core.pojo.response.APIResponse;
+import com.proptiger.core.pojo.response.APIResponseGeneric;
 import com.proptiger.core.util.Constants;
 
 import io.swagger.annotations.Api;
@@ -154,16 +157,18 @@ public class SellerRelevanceFactorsController extends BaseController{
     //ok tested
     @ResponseBody
     @RequestMapping(value="data/v1/entity/seller/srf/get-high-badge",method=RequestMethod.GET)
-    public APIResponse getHighestBadge(@RequestParam Set<Integer> sellerIds)
+    public APIResponseGeneric<Map<Integer, String>> getHighestBadge(@RequestParam Set<Integer> sellerIds)
     {
-    		return new APIResponse(sellerRelevanceFactorsService.getHighestBadge(sellerIds));
+    		return new APIResponseGeneric<Map<Integer,String>>(sellerRelevanceFactorsService.getHighestBadge(sellerIds));
     }
     //OK TESTED
     @ResponseBody
     @RequestMapping(value="data/v1/entity/find-by-tx-category",method=RequestMethod.GET)
-    public APIResponse findByTransactionCategory(@RequestParam List<String> transactionCategory)
+    public APIResponseGeneric<List<SellerRelevanceFactors>> findByTransactionCategory(@RequestParam List<String> transactionCategory)
     {
-    		return new APIResponse(sellerRelevanceFactorsService.findByTransactionCategory(transactionCategory));
+    	List<SellerRelevanceFactors> lSellerRelevanceFactors = sellerRelevanceFactorsService.findByTransactionCategory(transactionCategory);
+		return new APIResponseGeneric<List<SellerRelevanceFactors>>(lSellerRelevanceFactors);
+    		
     }
     //Used in MicroServiceHelper
     @ResponseBody
@@ -175,37 +180,41 @@ public class SellerRelevanceFactorsController extends BaseController{
     //OK TESTED
     @ResponseBody
     @RequestMapping(value="data/v1/entity/seller/by-sale-type",method=RequestMethod.GET)
-    public APIResponse getSellersBySaleTypeTransactionId(
+    public APIResponseGeneric<List<Integer>> getSellersBySaleTypeTransactionId(
             @RequestParam Collection<Integer> transactionCategoryId,
             @RequestParam Integer saleTypeId)
     {
-    	return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionId(transactionCategoryId, saleTypeId));
+  //  	return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionId(transactionCategoryId, saleTypeId));
+    		return new APIResponseGeneric<List<Integer>>(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionId(transactionCategoryId, saleTypeId));
     }
     // Used in NotificationService via microServicehelper
     //OK TESTED
     @ResponseBody
     @RequestMapping(value="data/v1/entity/seller/by-tx-category-id",method=RequestMethod.GET)
-    public APIResponse getSellersBySaleTypeTransactionCategoryIds(@RequestParam List<Integer> transactionCategory,
+    public APIResponseGeneric<List<SellerRelevanceFactors>> getSellersBySaleTypeTransactionCategoryIds(@RequestParam List<Integer> transactionCategory,
     		@RequestParam Integer saleTypeId)
     {
-    		return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionCategoryIds(transactionCategory,saleTypeId));
+ //   		return new APIResponse(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionCategoryIds(transactionCategory,saleTypeId));
+    		return new APIResponseGeneric<List<SellerRelevanceFactors>>(sellerRelevanceFactorsService.getSellersBySaleTypeTransactionCategoryIds(transactionCategory, saleTypeId));
     }
+    //OK TESTED
+  //Used in ListingIndexingProcessorService via microServiceHelper
     
     @ResponseBody
     @RequestMapping(value="data/v1/entity/seller/srf/visibility-rank",method=RequestMethod.POST)
-    public APIResponse getTRSBasedOnVisbilityRank(
+    public APIResponseGeneric<Float> getTRSBasedOnVisbilityRank(
            @RequestBody TransactionRevealScoreDto transactionRevealScoreDto)
     {
-    	return new APIResponse(sellerRelevanceFactorsService.getTRSBasedOnVisbilityRank(transactionRevealScoreDto.getParentGroups(),
+    	return new APIResponseGeneric<Float>(sellerRelevanceFactorsService.getTRSBasedOnVisbilityRank(transactionRevealScoreDto.getParentGroups(),
     			transactionRevealScoreDto.getSellerVisibilityRankings()));
     }
-
+//OK
     @ResponseBody
     @RequestMapping(value="data/v1/entity/seller/tx-score-for-listing",method=RequestMethod.POST)
-    public APIResponse computeTransactionRevealScoreForListing(
+    public APIResponseGeneric<Float> computeTransactionRevealScoreForListing(
     		@RequestBody TransactionRevealScoreForListingDto transactionRevealScoreForListingDto)
     {
-    	return new APIResponse(sellerRelevanceFactorsService.computeTransactionRevealScoreForListing(
+    	return new APIResponseGeneric<Float>(sellerRelevanceFactorsService.computeTransactionRevealScoreForListing(
     			transactionRevealScoreForListingDto.getListing(),
     			transactionRevealScoreForListingDto.getListingSellerTransactionStatuses(),
     			transactionRevealScoreForListingDto.getCompanyRelevantScoresDTO(),
